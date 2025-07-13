@@ -14,9 +14,9 @@
             </div>
         @endif
 
-        <a href="{{ route('admin.pendaftaran.export') }}"
-            class="mb-4 inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            📥 Export Excel
+        <a href="{{ route('admin.pendaftaran.pdf') }}"
+            class="inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 mb-4">
+            Export PDF
         </a>
 
         <table class="w-full table-auto border border-gray-300 shadow-sm">

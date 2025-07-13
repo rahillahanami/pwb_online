@@ -7,6 +7,7 @@ use App\Models\MahasiswaRegistration;
 use Illuminate\Http\Request;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 use Illuminate\Support\Facades\Validator;
@@ -113,27 +114,38 @@ class AdminController extends Controller
     }
 
     public function exportExcel(): StreamedResponse
-{
-    $pendaftar = MahasiswaRegistration::with(['user', 'provinsi', 'kabupaten'])->get();
+    {
+        $pendaftar = MahasiswaRegistration::with(['user', 'provinsi', 'kabupaten'])->get();
 
-    return SimpleExcelWriter::streamDownload('pendaftaran-mahasiswa.xlsx')
-        ->addRows($pendaftar->map(function ($data) {
-            return [
-                'Nama Lengkap' => $data->nama_lengkap,
-                'Email' => $data->email,
-                'Nomor HP' => $data->no_hp,
-                'Tempat Lahir' => $data->tempat_lahir,
-                'Tanggal Lahir' => $data->tanggal_lahir,
-                'Alamat KTP' => $data->alamat_ktp,
-                'Alamat Sekarang' => $data->alamat_sekarang,
-                'Kecamatan' => $data->kecamatan,
-                'Kabupaten' => optional($data->kabupaten)->nama,
-                'Provinsi' => optional($data->provinsi)->nama,
-                'Agama' => $data->agama,
-                'Jenis Kelamin' => $data->jenis_kelamin,
-                'Status Menikah' => $data->status_menikah,
-                'Kewarganegaraan' => $data->kewarganegaraan,
-            ];
-        }))->toResponse();
-}
+        return SimpleExcelWriter::streamDownload('pendaftaran-mahasiswa.xlsx')
+            ->addRows($pendaftar->map(function ($data) {
+                return [
+                    'Nama Lengkap' => $data->nama_lengkap,
+                    'Email' => $data->email,
+                    'Nomor HP' => $data->no_hp,
+                    'Tempat Lahir' => $data->tempat_lahir,
+                    'Tanggal Lahir' => $data->tanggal_lahir,
+                    'Alamat KTP' => $data->alamat_ktp,
+                    'Alamat Sekarang' => $data->alamat_sekarang,
+                    'Kecamatan' => $data->kecamatan,
+                    'Kabupaten' => optional($data->kabupaten)->nama,
+                    'Provinsi' => optional($data->provinsi)->nama,
+                    'Agama' => $data->agama,
+                    'Jenis Kelamin' => $data->jenis_kelamin,
+                    'Status Menikah' => $data->status_menikah,
+                    'Kewarganegaraan' => $data->kewarganegaraan,
+                ];
+            }))->toResponse();
+    }
+
+
+    public function exportPDF()
+    {
+        $pendaftar = MahasiswaRegistration::with(['user', 'kabupaten', 'provinsi'])->get();
+
+        $pdf = Pdf::loadView('admin.pendaftaran.pdf', compact('pendaftar'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('data-pendaftaran.pdf');
+    }
 }

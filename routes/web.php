@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\WilayahController;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\RedirectAfterLogin;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,16 @@ use App\Http\Middleware\RedirectAfterLogin;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/admin/pendaftaran/export-pdf', [AdminController::class, 'exportPDF'])->name('admin.pendaftaran.pdf');
+
+
+Route::get('/cek-email', function () {
+    $email = request('email');
+    $exists = User::where('email', $email)->exists();
+
+    return response()->json(['exists' => $exists]);
 });
 
 /*

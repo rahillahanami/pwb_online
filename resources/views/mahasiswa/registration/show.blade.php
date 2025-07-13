@@ -13,6 +13,7 @@
                 {{ session('success') }}
             </div>
         @endif
+        
 
         <a href="{{ route('mahasiswa.registration.pdf') }}"
             class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
