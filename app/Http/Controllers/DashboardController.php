@@ -6,13 +6,14 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
-{
-    if (auth()->user()->role === 'admin') {
-        return view('dashboard.admin');
+    public function mahasiswa()
+    {
+        return view('dashboard.mahasiswa');
     }
 
-    return view('dashboard.mahasiswa');
-}
-
+    // (Opsional) bisa tambahkan admin juga kalau mau satu tempat:
+    public function admin()
+    {
+        return view('dashboard.admin');
+    }
 }

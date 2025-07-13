@@ -4,13 +4,18 @@
             Dashboard Mahasiswa
         </h2>
     </x-slot>
-
-    <div class="py-6 px-4">
-        <p>Halo, <strong>{{ Auth::user()->name }}</strong>! Kamu login sebagai <strong>Mahasiswa</strong>.</p>
+    <div class="flex justify-center mt-8">
+        @if (Auth::user()->mahasiswaRegistration)
+            <a href="{{ route('mahasiswa.registration.show') }}"
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded shadow transition duration-200">
+                📄 Lihat Pendaftaran
+            </a>
+        @else
+            <a href="{{ route('mahasiswa.registration.create') }}"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded shadow transition duration-200">
+                📝 Pendaftaran Mahasiswa Baru
+            </a>
+        @endif
     </div>
-    <div class="py-6 px-6 max-w-4xl mx-auto bg-white shadow rounded">
-        <p>Silakan lengkapi pendaftaran kamu di bawah ini:</p>
-        <a href="{{ route('mahasiswa.registration.create') }}" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            Pendaftaran Mahasiswa Baru
-        </a>
+
 </x-app-layout>

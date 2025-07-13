@@ -15,10 +15,10 @@ class RoleMiddleware
      */
     public function handle($request, Closure $next, $role)
     {
-        if (auth()->user()->role !== $role) {
-            abort(403); // atau redirect ke halaman lain
+        if (auth()->check() && auth()->user()->role === $role) {
+            return $next($request);
         }
 
-        return $next($request);
+        abort(403, 'Unauthorized');
     }
 }

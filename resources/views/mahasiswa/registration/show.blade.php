@@ -5,6 +5,8 @@
         </h2>
     </x-slot>
 
+    <br><br>
+
     <div class="py-6 px-6 max-w-4xl mx-auto bg-white shadow rounded">
         @if (session('success'))
             <div class="mb-4 text-green-600 font-semibold">
@@ -12,11 +14,18 @@
             </div>
         @endif
 
+        <a href="{{ route('mahasiswa.registration.pdf') }}"
+            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            📄 Download Bukti Pendaftaran (PDF)
+        </a>
+        <br><br>
+
         <div class="space-y-4">
             <div>
                 <strong>Nama Lengkap:</strong><br>
                 {{ $data->nama_lengkap }}
             </div>
+
             <div>
                 <strong>Alamat KTP:</strong><br>
                 {{ $data->alamat_ktp }}
@@ -104,6 +113,8 @@
                     </video>
                 </div>
             @endif
+
+
 
         </div>
     </div>

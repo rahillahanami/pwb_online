@@ -2,37 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kabupaten;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\MahasiswaRegistration;
+use App\Models\Provinsi;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MahasiswaRegistrationController extends Controller
 {
-    // FORM PENDAFTARAN
-    public function create()
+    public function create(Request $request)
     {
         $user = Auth::user();
 
-        // Cegah daftar ulang
         if ($user->mahasiswaRegistration) {
             return redirect()->route('mahasiswa.registration.show');
         }
 
-        // Dummy data provinsi & kabupaten (sementara)
-        $provinsis = [
-            ['id' => 1, 'nama' => 'Jawa Tengah'],
-            ['id' => 2, 'nama' => 'DKI Jakarta'],
-        ];
+        // Ambil semua provinsi
+        $provinsis = Provinsi::orderBy('nama')->get();
 
-        $kabupatens = [
-            ['id' => 1, 'nama' => 'Semarang'],
-            ['id' => 2, 'nama' => 'Jakarta Selatan'],
-        ];
+        // Cek apakah provinsi terpilih
+        $selectedProvinsiId = $request->get('provinsi_id');
 
-        return view('mahasiswa.registration.create', compact('provinsis', 'kabupatens'));
+        // Ambil kabupaten sesuai provinsi (jika ada)
+        $kabupatens = $selectedProvinsiId
+            ? Kabupaten::where('provinsi_id', $selectedProvinsiId)->orderBy('nama')->get()
+            : collect();
+
+        return view('mahasiswa.registration.create', compact('provinsis', 'kabupatens', 'selectedProvinsiId'));
     }
-
     // PROSES SIMPAN PENDAFTARAN
     public function store(Request $request)
     {
@@ -95,5 +95,17 @@ class MahasiswaRegistrationController extends Controller
         }
 
         return view('mahasiswa.registration.show', compact('data'));
+    }
+
+    public function exportPDF()
+    {
+        $data = Auth::user()->mahasiswaRegistration;
+
+        if (!$data) {
+            return redirect()->route('mahasiswa.registration.create')->with('warning', 'Silakan isi pendaftaran terlebih dahulu.');
+        }
+
+        $pdf = Pdf::loadView('mahasiswa.registration.pdf', compact('data'));
+        return $pdf->download('bukti-pendaftaran.pdf');
     }
 }

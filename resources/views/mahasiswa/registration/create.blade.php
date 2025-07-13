@@ -5,6 +5,8 @@
         </h2>
     </x-slot>
 
+    <br><br>
+
     <div class="py-6 px-6 max-w-4xl mx-auto bg-white shadow rounded">
         <form action="{{ route('mahasiswa.registration.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -35,23 +37,26 @@
 
             {{-- Provinsi & Kabupaten --}}
             <div class="mb-4 grid grid-cols-2 gap-4">
-                <div>
+                <div class="mb-4">
                     <label class="block font-semibold">Provinsi</label>
-                    <select name="provinsi_id" class="w-full border rounded px-3 py-2" required>
+                    <select name="provinsi_id" id="provinsi" class="w-full border rounded px-3 py-2">
+                        <option value="">-- Pilih Provinsi --</option>
                         @foreach ($provinsis as $provinsi)
-                            <option value="{{ $provinsi['id'] }}">{{ $provinsi['nama'] }}</option>
+                            <option value="{{ $provinsi->id }}">{{ $provinsi->nama }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <div>
-                    <label class="block font-semibold">Kabupaten</label>
-                    <select name="kabupaten_id" class="w-full border rounded px-3 py-2" required>
-                        @foreach ($kabupatens as $kabupaten)
-                            <option value="{{ $kabupaten['id'] }}">{{ $kabupaten['nama'] }}</option>
-                        @endforeach
+
+
+                <div class="mb-4">
+                    <label class="block font-semibold">Kabupaten/Kota</label>
+                    <select name="kabupaten_id" id="kabupaten" class="w-full border rounded px-3 py-2" required>
+                        <option value="">-- Pilih Kabupaten --</option>
                     </select>
                 </div>
+
+
             </div>
 
             {{-- Telepon, HP, Email --}}
@@ -159,5 +164,27 @@
                 </button>
             </div>
         </form>
+
+        <script>
+            document.getElementById('provinsi').addEventListener('change', function() {
+                let provinsiId = this.value;
+                let kabupatenSelect = document.getElementById('kabupaten');
+
+                kabupatenSelect.innerHTML = '<option>Loading...</option>';
+
+                fetch(`/api/kabupaten?provinsi_id=${provinsiId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        kabupatenSelect.innerHTML = '<option value="">-- Pilih Kabupaten --</option>';
+                        data.forEach(item => {
+                            kabupatenSelect.innerHTML += `<option value="${item.id}">${item.nama}</option>`;
+                        });
+                    })
+                    .catch(() => {
+                        kabupatenSelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                    });
+            });
+        </script>
+
     </div>
 </x-app-layout>
